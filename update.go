@@ -1,8 +1,6 @@
 package main
 
 import (
-	"strings"
-
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -15,28 +13,29 @@ type digResultMsg struct {
 // Update function: handles user input, executes commands and updates the model
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "enter":
-			if m.input.Value() != "" {
-				m.loading = true
-				m.result = ""
-				return m, runDigCommand(m.input.Value()) // Call dig
-			}
 		case "ctrl+c", "q":
 			return m, tea.Quit
+
+		case "enter":
+			return m, runDigCommand(m.input.Value())
 		}
+
 	case digResultMsg:
-		m.loading = false
 		if msg.err != nil {
-			m.result = "Error: " + msg.err.Error()
+			m.err = msg.err
+			m.result = ""
 		} else {
-			m.result = strings.TrimSpace(msg.output)
+			m.result = msg.output
+			m.err = nil
 		}
+		return m, nil
 	}
 
-	// Handle text input updates
 	var cmd tea.Cmd
 	m.input, cmd = m.input.Update(msg)
+
 	return m, cmd
 }

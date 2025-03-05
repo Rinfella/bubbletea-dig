@@ -1,16 +1,20 @@
 package main
 
-import "fmt"
+import "github.com/charmbracelet/lipgloss"
 
 func (m model) View() string {
-	s := "Enter a domain & press Enter:\n" + m.input.View() + "\n\n"
+	title := titleStyle.Render("🔍 DIG TUI")
 
-	if m.loading {
-		s += "Looking up domain...\n"
-	} else if m.result != "" {
-		s += fmt.Sprintf("Result: \n%s\n", m.result)
+	input := inputStyle.Render(m.input.View())
+
+	var result string
+	if m.err != nil {
+		result = errorStyle.Render("❌ Error: " + m.err.Error())
+	} else {
+		result = resultStyle.Render("📜 Result:\n" + m.result)
 	}
 
-	s += "\nPress 'q' to quit."
-	return s
+	ui := lipgloss.JoinVertical(lipgloss.Left, title, input, result)
+
+	return boxStyle.Render(ui)
 }

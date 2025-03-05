@@ -17,7 +17,7 @@ func initialModel() model {
 	ti.Placeholder = "Enter domain: (e.g., example.com)"
 	ti.Focus()
 	ti.CharLimit = 64
-	ti.Width = 30
+	ti.Width = 40
 
 	return model{
 		input:   ti,
